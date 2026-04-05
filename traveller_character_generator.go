@@ -7,25 +7,25 @@ import (
 )
 
 type Stat struct {
-    strength        int range 1 to 15
-    dexterity       int range 1 to 15
-    endurance       int range 1 to 15
-    intelligence    int range 1 to 15
-    education       int range 1 to 15
-    socialStatus    int range 1 to 15
+    strength        int
+    dexterity       int
+    endurance       int
+    intelligence    int
+    education       int
+    socialStatus    int
 }
 
 type Character struct {
     name            string
-    age             int = 18
+    age             int
     stat            Stat
     title           string
     rank            string
     service         string
-    termsServed     int = 0
-    isRetired       bool = false
+    termsServed     int
+    isRetired       bool
     retirementPay   int
-    isTASMember     bool = false
+    isTASMember     bool
 }
 
 type Career struct {
@@ -57,20 +57,22 @@ func roll_dice() int {
 
 
 func main() {
-// Prompt the user to enter their name.
+    var char Character
+
+    // Prompt the user to enter their name.
 	fmt.Print("Please enter your name: ")
 
 	// Read the user's input and assign it to the name variable.
-	fmt.Scanln(&Character.name)
+	fmt.Scanln(&char.name)
+    
+    char.stat.strength = roll_dice()
+    char.stat.dexterity = roll_dice()
+    char.stat.endurance = roll_dice()
+    char.stat.intelligence = roll_dice()
+    char.stat.education = roll_dice()
+    char.stat.socialStatus = roll_dice()
 
-	&Character.stat.strength := roll_dice()
-    &Character.stat.dexterity := roll_dice()
-    &Character.stat.endurance := roll_dice()
-    &Character.stat.intelligence := roll_dice()
-    &Character.stat.education := roll_dice()
-    &Character.stat.socialStatus := roll_dice()
-
-	fmt.Printf("Name: %s\n", Character.name)
-	fmt.Printf("Age: %d\n", Character.age)
-	fmt.Printf("Stat: %d\n", Character.stat)
+	fmt.Printf("Name: %s\n", char.name)
+	fmt.Printf("Age: %d\n", char.age)
+	fmt.Printf("Stat: %d\n", char.stat)
 }
