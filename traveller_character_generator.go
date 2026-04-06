@@ -1,41 +1,43 @@
 package main
 
 import (
-    "fmt"
+	"bufio"
+	"fmt"
 	"math/rand" // Import the math/rand package for random number generation
-	"time"     // Import the time package to seed the random number generator
+	"os"
+	"time" // Import the time package to seed the random number generator
 )
 
 type Stat struct {
-    strength        int
-    dexterity       int
-    endurance       int
-    intelligence    int
-    education       int
-    socialStatus    int
+	strength     int
+	dexterity    int
+	endurance    int
+	intelligence int
+	education    int
+	socialStatus int
 }
 
 type Character struct {
-    name            string
-    age             int
-    stat            Stat
-    title           string
-    rank            string
-    service         string
-    termsServed     int
-    isRetired       bool
-    retirementPay   int
-    isTASMember     bool
+	name          string
+	age           int
+	stat          Stat
+	title         string
+	rank          string
+	service       string
+	termsServed   int
+	isRetired     bool
+	retirementPay int
+	isTASMember   bool
 }
 
 type Career struct {
-    name        string
-    enlistment  int
-    draft       int
-    survival    int
-    commission  int
-    promotion   int
-    reenlist    int
+	name       string
+	enlistment int
+	draft      int
+	survival   int
+	commission int
+	promotion  int
+	reenlist   int
 }
 
 // roll_dice simulates rolling two six-sided dice and returns their sum.
@@ -55,22 +57,42 @@ func roll_dice() int {
 	return total // Return only the total
 }
 
-
 func main() {
-    var char Character
+	var char Character
 
-    // Prompt the user to enter their name.
+	// Prompt the user to enter their name.
 	fmt.Print("Please enter your name: ")
 
 	// Read the user's input and assign it to the name variable.
-	fmt.Scanln(&char.name)
-    
-    char.stat.strength = roll_dice()
-    char.stat.dexterity = roll_dice()
-    char.stat.endurance = roll_dice()
-    char.stat.intelligence = roll_dice()
-    char.stat.education = roll_dice()
-    char.stat.socialStatus = roll_dice()
+
+	reader := bufio.NewReader(os.Stdin) // Create a buffered reader
+
+	for {
+		// Read a line from the reader until a newline is encountered.
+		// The '\n' argument tells bufio to stop reading when it sees a newline character.
+		line, err := reader.ReadString('\n')
+
+		if err != nil {
+			fmt.Println("Error reading input:", err) // Handle errors (e.g., EOF)
+			break                                    // Exit loop if there's an error
+		}
+
+		// Remove the trailing newline character (important!)
+		char.name = line[:len(line)-1]
+
+		// fmt.Println("Name:", input) // Print the entered name
+
+		break // Exit loop after successful read
+	}
+
+	// fmt.Scanln(&char.name)
+
+	char.stat.strength = roll_dice()
+	char.stat.dexterity = roll_dice()
+	char.stat.endurance = roll_dice()
+	char.stat.intelligence = roll_dice()
+	char.stat.education = roll_dice()
+	char.stat.socialStatus = roll_dice()
 
 	fmt.Printf("Name: %s\n", char.name)
 	fmt.Printf("Age: %d\n", char.age)
