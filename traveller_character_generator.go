@@ -74,20 +74,18 @@ func read_input() string {
 		// Remove the trailing newline character (important!)
 		input = line[:len(line)-1]
 
-		// fmt.Println("Name:", input) // Print the entered name
-
 		break // Exit loop after successful read
 	}
 	return input
 }
 
 func main() {
-	var char Character
+	char := Character{age: 18}
 
 	// Prompt the user to enter their name.
 	fmt.Print("Please enter your name: ")
-
 	char.name = read_input()
+
 	char.stat.strength = roll_dice()
 	char.stat.dexterity = roll_dice()
 	char.stat.endurance = roll_dice()
@@ -98,4 +96,14 @@ func main() {
 	fmt.Printf("Name: %s\n", char.name)
 	fmt.Printf("Age: %d\n", char.age)
 	fmt.Printf("Stat: %d\n", char.stat)
+
+	for {
+		fmt.Print("What service? 1:Navy, 2:Marines, 3:Army, 4:Scouts, 4:Merchants, 6:Other (1-6): ")
+		service_choice := read_input()
+
+		if !(service_choice == "1" || service_choice == "2" || service_choice == "3" || service_choice == "4" || service_choice == "5" || service_choice == "6") {
+			continue
+		}
+		break
+	}
 }
