@@ -57,14 +57,8 @@ func roll_dice() int {
 	return total // Return only the total
 }
 
-func main() {
-	var char Character
-
-	// Prompt the user to enter their name.
-	fmt.Print("Please enter your name: ")
-
-	// Read the user's input and assign it to the name variable.
-
+func read_input() string {
+	var input string
 	reader := bufio.NewReader(os.Stdin) // Create a buffered reader
 
 	for {
@@ -78,15 +72,22 @@ func main() {
 		}
 
 		// Remove the trailing newline character (important!)
-		char.name = line[:len(line)-1]
+		input = line[:len(line)-1]
 
 		// fmt.Println("Name:", input) // Print the entered name
 
 		break // Exit loop after successful read
 	}
+	return input
+}
 
-	// fmt.Scanln(&char.name)
+func main() {
+	var char Character
 
+	// Prompt the user to enter their name.
+	fmt.Print("Please enter your name: ")
+
+	char.name = read_input()
 	char.stat.strength = roll_dice()
 	char.stat.dexterity = roll_dice()
 	char.stat.endurance = roll_dice()
