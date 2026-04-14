@@ -97,6 +97,9 @@ func main() {
 	fmt.Printf("Stat: %+v\n", char.stat)
 
 	var enlistmentDM int // enlistment dice roll modifier
+	var survivalDM int   // survival dice roll modifier
+	var commisionDM int  // commission dice roll modifier
+	var promotionDM int  // promotion dice roll modifier
 
 	for {
 		fmt.Print("What service? 1:Navy, 2:Marines, 3:Army, 4:Scouts, 4:Merchants, 6:Other (1-6): ")
@@ -168,21 +171,69 @@ func main() {
 	// submit to draft if enlistment is not achieved
 	emlistmentRoll := roll_dice()
 	if emlistmentRoll+enlistmentDM < career.enlistment {
-		fmt.Printf("You were not enlisted in the ", char.service, " service.")
+		fmt.Printf("You were not enlisted in the %s\n", char.service)
 		draftRoll := rand.UintN(6) + 1
 		switch draftRoll {
 		case 1:
 			char.service = "Navy"
+			career = Career{name: "Navy", enlistment: 8, draft: 1, survival: 5, commission: 10, promotion: 8, reenlist: 6}
+			if char.stat.intelligence >= 7 {
+				survivalDM += 2
+			}
+			if char.stat.socialStatus >= 9 {
+				commisionDM += 1
+			}
+			if char.stat.education >= 8 {
+				promotionDM += 1
+			}
 		case 2:
 			char.service = "Marines"
+			career = Career{name: "Marines", enlistment: 9, draft: 2, survival: 6, commission: 9, promotion: 9, reenlist: 6}
+			if char.stat.endurance >= 8 {
+				survivalDM += 2
+			}
+			if char.stat.education >= 7 {
+				commisionDM += 1
+			}
+			if char.stat.socialStatus >= 8 {
+				promotionDM += 1
+			}
 		case 3:
 			char.service = "Army"
+			career = Career{name: "Army", enlistment: 5, draft: 3, survival: 5, commission: 5, promotion: 6, reenlist: 7}
+			if char.stat.education >= 6 {
+				survivalDM += 2
+			}
+			if char.stat.endurance >= 7 {
+				commisionDM += 1
+			}
+			if char.stat.education >= 7 {
+				promotionDM += 1
+			}
 		case 4:
 			char.service = "Scouts"
+			career = Career{name: "Scouts", enlistment: 7, draft: 4, survival: 7, commission: 0, promotion: 0, reenlist: 3}
+			if char.stat.endurance >= 9 {
+				survivalDM += 2
+			}
 		case 5:
 			char.service = "Merchants"
+			career = Career{name: "Merchants", enlistment: 7, draft: 5, survival: 5, commission: 4, promotion: 10, reenlist: 4}
+			if char.stat.intelligence >= 7 {
+				survivalDM += 2
+			}
+			if char.stat.intelligence >= 6 {
+				commisionDM += 1
+			}
+			if char.stat.intelligence >= 9 {
+				promotionDM += 1
+			}
 		case 6:
 			char.service = "Other"
+			career = Career{name: "Other", enlistment: 3, draft: 6, survival: 5, commission: 0, promotion: 0, reenlist: 5}
+			if char.stat.intelligence >= 9 {
+				survivalDM += 2
+			}
 		}
 	}
 
@@ -190,5 +241,12 @@ func main() {
 	fmt.Printf("Age: %d\n", char.age)
 	fmt.Printf("Stat: %+v\n", char.stat)
 	fmt.Printf("Service: %s\n", char.service)
+
+	for {
+
+		continue
+
+		break
+	}
 
 }
