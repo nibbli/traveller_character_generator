@@ -4,7 +4,14 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-        
-    "console": "integratedTerminal"
+        "name": "Debug Go File",
+        "type": "go",
+        "request": "launch",
+        "program": "${workspaceFolder}/traveller_character_generator.go", // Replace with your main file name
+        "args": [],
+        "stopAtEntry": true,
+        "skipFiles": ["node_modules/**", "vendor/**"],
+        "console": "integratedTerminal", // Use the integrated terminal for output
+        "debugShowInlineErrorSymbols": true        
     ]
 }
