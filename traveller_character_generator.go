@@ -22,8 +22,9 @@ type Character struct {
 	age           int
 	stat          Stat
 	title         string
-	rank          string
+	rank          int
 	service       string
+	hasCommission bool
 	termsServed   int
 	isRetired     bool
 	retirementPay int
@@ -77,7 +78,7 @@ func read_input() string {
 	return input
 }
 
-func setCareer(draftNumber int, career *Career, char *Character, enlistmentDM *int, survivalDM *int, commisionDM *int, promotionDM *int) {
+func setCareer(draftNumber int, career *Career, char *Character, enlistmentDM *int, survivalDM *int, commissionDM *int, promotionDM *int) {
 	switch draftNumber {
 	case 1:
 		char.service = "Navy"
@@ -98,7 +99,7 @@ func setCareer(draftNumber int, career *Career, char *Character, enlistmentDM *i
 			*survivalDM += 2
 		}
 		if char.stat.socialStatus >= 9 {
-			*commisionDM += 1
+			*commissionDM += 1
 		}
 		if char.stat.education >= 8 {
 			*promotionDM += 1
@@ -122,7 +123,7 @@ func setCareer(draftNumber int, career *Career, char *Character, enlistmentDM *i
 			*survivalDM += 2
 		}
 		if char.stat.education >= 7 {
-			*commisionDM += 1
+			*commissionDM += 1
 		}
 		if char.stat.socialStatus >= 8 {
 			*promotionDM += 1
@@ -146,7 +147,7 @@ func setCareer(draftNumber int, career *Career, char *Character, enlistmentDM *i
 			*survivalDM += 2
 		}
 		if char.stat.endurance >= 7 {
-			*commisionDM += 1
+			*commissionDM += 1
 		}
 		if char.stat.education >= 7 {
 			*promotionDM += 1
@@ -157,8 +158,8 @@ func setCareer(draftNumber int, career *Career, char *Character, enlistmentDM *i
 		career.enlistment = 7
 		career.draft = 4
 		career.survival = 7
-		career.commission = 0
-		career.promotion = 0
+		career.commission = 15
+		career.promotion = 15
 		career.reenlist = 3
 		if char.stat.intelligence >= 6 {
 			*enlistmentDM += 1
@@ -188,7 +189,7 @@ func setCareer(draftNumber int, career *Career, char *Character, enlistmentDM *i
 			*survivalDM += 2
 		}
 		if char.stat.intelligence >= 6 {
-			*commisionDM += 1
+			*commissionDM += 1
 		}
 		if char.stat.intelligence >= 9 {
 			*promotionDM += 1
@@ -199,8 +200,8 @@ func setCareer(draftNumber int, career *Career, char *Character, enlistmentDM *i
 		career.enlistment = 3
 		career.draft = 6
 		career.survival = 5
-		career.commission = 0
-		career.promotion = 0
+		career.commission = 15
+		career.promotion = 15
 		career.reenlist = 5
 		if char.stat.intelligence >= 9 {
 			*survivalDM += 2
@@ -230,7 +231,7 @@ func main() {
 
 	var enlistmentDM int // enlistment dice roll modifier
 	var survivalDM int   // survival dice roll modifier
-	var commisionDM int  // commission dice roll modifier
+	var commissionDM int // commission dice roll modifier
 	var promotionDM int  // promotion dice roll modifier
 
 	for {
@@ -244,7 +245,7 @@ func main() {
 
 		serviceChoiceInt, _ := strconv.Atoi(serviceChoice)
 
-		setCareer(serviceChoiceInt, &career, &char, &enlistmentDM, &survivalDM, &commisionDM, &promotionDM)
+		setCareer(serviceChoiceInt, &career, &char, &enlistmentDM, &survivalDM, &commissionDM, &promotionDM)
 
 		enlistmentRoll := roll_dice()
 
@@ -255,7 +256,7 @@ func main() {
 		if enlistmentRoll+enlistmentDM < career.enlistment {
 			fmt.Printf("You were not enlisted in the %s\n", career.name)
 			draftRoll := rand.IntN(6) + 1
-			setCareer(draftRoll, &career, &char, &enlistmentDM, &survivalDM, &commisionDM, &promotionDM)
+			setCareer(draftRoll, &career, &char, &enlistmentDM, &survivalDM, &commissionDM, &promotionDM)
 		}
 		break
 	}
@@ -265,4 +266,29 @@ func main() {
 	fmt.Printf("Stat: %+v\n", char.stat)
 	fmt.Printf("Service: %s\n", char.service)
 	fmt.Printf("Career: %+v\n", career)
+
+	for {
+		survivalRoll := roll_dice()
+		if survivalRoll+survivalDM < career.survival {
+			fmt.Printf("You died with roll %d + DM %d below %d\n", survivalRoll, survivalDM, career.survival)
+			os.Exit(0)
+		}
+		char.age += 4
+		char.termsServed += 1
+
+		if !char.hasCommission {
+			commissionRoll := roll_dice()
+			if commissionRoll+commissionDM >= career.commission {
+				char.rank += 1
+				char.hasCommission = true
+			}
+		}
+
+		if char.hasCommission && ((career.name != "Merchants" && char.rank <= 5) || (career.name == "Merchants" && char.rank <= 4)) {
+			promotionRoll := roll_dice()
+			if promotionRoll+promotionDM >= career.promotion {
+				char.rank += 1
+			}
+		}
+	}
 }
