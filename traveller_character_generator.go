@@ -17,6 +17,11 @@ type Stat struct {
 	socialStatus int
 }
 
+type Skill struct {
+	name  string
+	value int
+}
+
 type Character struct {
 	name          string
 	age           int
@@ -29,6 +34,7 @@ type Character struct {
 	isRetired     bool
 	retirementPay int
 	isTASMember   bool
+	skills        []Skill
 }
 
 type Career struct {
@@ -158,8 +164,8 @@ func setCareer(draftNumber int, career *Career, char *Character, enlistmentDM *i
 		career.enlistment = 7
 		career.draft = 4
 		career.survival = 7
-		career.commission = 15
-		career.promotion = 15
+		career.commission = 15 // No ranks in Scouts service
+		career.promotion = 15  // No ranks in Scouts service
 		career.reenlist = 3
 		if char.stat.intelligence >= 6 {
 			*enlistmentDM += 1
@@ -200,11 +206,409 @@ func setCareer(draftNumber int, career *Career, char *Character, enlistmentDM *i
 		career.enlistment = 3
 		career.draft = 6
 		career.survival = 5
-		career.commission = 15
-		career.promotion = 15
+		career.commission = 15 // No ranks in Others service
+		career.promotion = 15  // No ranks in Others service
 		career.reenlist = 5
 		if char.stat.intelligence >= 9 {
 			*survivalDM += 2
+		}
+	}
+}
+
+// setSkill adds a new skill with value 1 if it doesn't exist,
+// otherwise increases the existing skill’s value by one.
+func setSkill(char *Character, skillName string) {
+	for i := range char.skills {
+		if char.skills[i].name == skillName {
+			char.skills[i].value += 1 // Increase value by 1 directly
+		} else {
+			// Skill not found, add it with a value of 1
+			char.skills = append(char.skills, Skill{name: skillName, value: 1})
+		}
+	}
+}
+
+func getSkill(skillRoll int, skillTable int, career *Career, char *Character) {
+
+	switch career.name {
+	case "Navy":
+		switch skillTable {
+		case 1:
+			switch skillRoll {
+			case 1:
+				char.stat.strength += 1
+			case 2:
+				char.stat.dexterity += 1
+			case 3:
+				char.stat.endurance += 1
+			case 4:
+				char.stat.intelligence += 1
+			case 5:
+				char.stat.education += 1
+			case 6:
+				char.stat.socialStatus += 1
+			}
+		case 2:
+			switch skillRoll {
+			case 1:
+				setSkill(char, "Ship's Boat")
+			case 2:
+				setSkill(char, "Vacc Suit")
+			case 3:
+				setSkill(char, "Fwd Obsvr")
+			case 4:
+				setSkill(char, "Gunnery")
+			case 5:
+				setSkill(char, "Blade Cbt")
+			case 6:
+				setSkill(char, "Gun Cbt")
+			}
+		case 3:
+			switch skillRoll {
+			case 1:
+				setSkill(char, "Vacc Suit")
+			case 2:
+				setSkill(char, "Mechanical")
+			case 3:
+				setSkill(char, "Electronic")
+			case 4:
+				setSkill(char, "Engineering")
+			case 5:
+				setSkill(char, "Gunnery")
+			case 6:
+				setSkill(char, "Jack-o-T")
+			}
+		case 4:
+			switch skillRoll {
+			case 1:
+				setSkill(char, "Medical")
+			case 2:
+				setSkill(char, "Navigation")
+			case 3:
+				setSkill(char, "Engineering")
+			case 4:
+				setSkill(char, "Computer")
+			case 5:
+				setSkill(char, "Pilot")
+			case 6:
+				setSkill(char, "Admin")
+			}
+		}
+
+	case "Marines":
+		switch skillTable {
+		case 1:
+			switch skillRoll {
+			case 1:
+				char.stat.strength += 1
+			case 2:
+				char.stat.dexterity += 1
+			case 3:
+				char.stat.endurance += 1
+			case 4:
+				setSkill(char, "Gambling")
+			case 5:
+				setSkill(char, "Brawling")
+			case 6:
+				setSkill(char, "Blade Cbt")
+			}
+		case 2:
+			switch skillRoll {
+			case 1:
+				setSkill(char, "Vehicle")
+			case 2:
+				setSkill(char, "Vacc Suit")
+			case 3:
+				setSkill(char, "Blade Cbt")
+			case 4:
+				setSkill(char, "Gun Cbt")
+			case 5:
+				setSkill(char, "Blade Cbt")
+			case 6:
+				setSkill(char, "Gun Cbt")
+			}
+		case 3:
+			switch skillRoll {
+			case 1:
+				setSkill(char, "Vehicle")
+			case 2:
+				setSkill(char, "Mechanical")
+			case 3:
+				setSkill(char, "Electronic")
+			case 4:
+				setSkill(char, "Tactics")
+			case 5:
+				setSkill(char, "Blade Cbt")
+			case 6:
+				setSkill(char, "Gun Cbt")
+			}
+		case 4:
+			switch skillRoll {
+			case 1:
+				setSkill(char, "Medical")
+			case 2:
+				setSkill(char, "Tactics")
+			case 3:
+				setSkill(char, "Tactics")
+			case 4:
+				setSkill(char, "Computer")
+			case 5:
+				setSkill(char, "Leader")
+			case 6:
+				setSkill(char, "Admin")
+			}
+		}
+	case "Army":
+		switch skillTable {
+		case 1:
+			switch skillRoll {
+			case 1:
+				char.stat.strength += 1
+			case 2:
+				char.stat.dexterity += 1
+			case 3:
+				char.stat.endurance += 1
+			case 4:
+				setSkill(char, "Gambling")
+			case 5:
+				char.stat.education += 1
+			case 6:
+				setSkill(char, "Brawling")
+			}
+		case 2:
+			switch skillRoll {
+			case 1:
+				setSkill(char, "Vehicle")
+			case 2:
+				setSkill(char, "Air/Raft")
+			case 3:
+				setSkill(char, "Gun Cbt")
+			case 4:
+				setSkill(char, "Fwd Obsvr")
+			case 5:
+				setSkill(char, "Blade Cbt")
+			case 6:
+				setSkill(char, "Gun Cbt")
+			}
+		case 3:
+			switch skillRoll {
+			case 1:
+				setSkill(char, "Vehicle")
+			case 2:
+				setSkill(char, "Mechanical")
+			case 3:
+				setSkill(char, "Electronic")
+			case 4:
+				setSkill(char, "Tactics")
+			case 5:
+				setSkill(char, "Blade Cbt")
+			case 6:
+				setSkill(char, "Gun Cbt")
+			}
+		case 4:
+			switch skillRoll {
+			case 1:
+				setSkill(char, "Medical")
+			case 2:
+				setSkill(char, "Tactics")
+			case 3:
+				setSkill(char, "Tactics")
+			case 4:
+				setSkill(char, "Computer")
+			case 5:
+				setSkill(char, "Leader")
+			case 6:
+				setSkill(char, "Admin")
+			}
+		}
+	case "Scouts":
+		switch skillTable {
+		case 1:
+			switch skillRoll {
+			case 1:
+				char.stat.strength += 1
+			case 2:
+				char.stat.dexterity += 1
+			case 3:
+				char.stat.endurance += 1
+			case 4:
+				char.stat.intelligence += 1
+			case 5:
+				char.stat.education += 1
+			case 6:
+				setSkill(char, "Gun Cbt")
+			}
+		case 2:
+			switch skillRoll {
+			case 1:
+				setSkill(char, "Vehicle")
+			case 2:
+				setSkill(char, "Vacc Suit")
+			case 3:
+				setSkill(char, "Mechanical")
+			case 4:
+				setSkill(char, "Navigation")
+			case 5:
+				setSkill(char, "Electronics")
+			case 6:
+				setSkill(char, "Jack-o-T")
+			}
+		case 3:
+			switch skillRoll {
+			case 1:
+				setSkill(char, "Vehicle")
+			case 2:
+				setSkill(char, "Mechanical")
+			case 3:
+				setSkill(char, "Electronics")
+			case 4:
+				setSkill(char, "Jack-o-T")
+			case 5:
+				setSkill(char, "Gunnery")
+			case 6:
+				setSkill(char, "Medical")
+			}
+		case 4:
+			switch skillRoll {
+			case 1:
+				setSkill(char, "Medical")
+			case 2:
+				setSkill(char, "Navigation")
+			case 3:
+				setSkill(char, "Engineering")
+			case 4:
+				setSkill(char, "Computer")
+			case 5:
+				setSkill(char, "Pilot")
+			case 6:
+				setSkill(char, "Jack-o-T")
+			}
+		}
+	case "Merchants":
+		switch skillTable {
+		case 1:
+			switch skillRoll {
+			case 1:
+				char.stat.strength += 1
+			case 2:
+				char.stat.strength += 1
+			case 3:
+				char.stat.strength += 1
+			case 4:
+				char.stat.strength += 1
+			case 5:
+				setSkill(char, "Blade Cbt")
+			case 6:
+				setSkill(char, "Bribery")
+			}
+		case 2:
+			switch skillRoll {
+			case 1:
+				setSkill(char, "Vehicle")
+			case 2:
+				setSkill(char, "Vacc Suit")
+			case 3:
+				setSkill(char, "Jack-o-T")
+			case 4:
+				setSkill(char, "Steward")
+			case 5:
+				setSkill(char, "Electronics")
+			case 6:
+				setSkill(char, "Gun Cbt")
+			}
+		case 3:
+			switch skillRoll {
+			case 1:
+				setSkill(char, "Streetwise")
+			case 2:
+				setSkill(char, "Mechanical")
+			case 3:
+				setSkill(char, "Electronics")
+			case 4:
+				setSkill(char, "Navigation")
+			case 5:
+				setSkill(char, "Gunnery")
+			case 6:
+				setSkill(char, "Medical")
+			}
+		case 4:
+			switch skillRoll {
+			case 1:
+				setSkill(char, "Medical")
+			case 2:
+				setSkill(char, "Navigation")
+			case 3:
+				setSkill(char, "Engineering")
+			case 4:
+				setSkill(char, "Computer")
+			case 5:
+				setSkill(char, "Pilot")
+			case 6:
+				setSkill(char, "Admin")
+			}
+		}
+	case "Other":
+		switch skillTable {
+		case 1:
+			switch skillRoll {
+			case 1:
+				char.stat.strength += 1
+			case 2:
+				char.stat.strength += 1
+			case 3:
+				char.stat.strength += 1
+			case 4:
+				setSkill(char, "Blade Cbt")
+			case 5:
+				setSkill(char, "Brawling")
+			case 6:
+				char.stat.strength += 1
+			}
+		case 2:
+			switch skillRoll {
+			case 1:
+				setSkill(char, "Vehicle")
+			case 2:
+				setSkill(char, "Gambling")
+			case 3:
+				setSkill(char, "Brawling")
+			case 4:
+				setSkill(char, "Bribery")
+			case 5:
+				setSkill(char, "Blade Cbt")
+			case 6:
+				setSkill(char, "Gun Cbt")
+			}
+		case 3:
+			switch skillRoll {
+			case 1:
+				setSkill(char, "Streetwise")
+			case 2:
+				setSkill(char, "Mechanical")
+			case 3:
+				setSkill(char, "Electronics")
+			case 4:
+				setSkill(char, "Gambling")
+			case 5:
+				setSkill(char, "Brawling")
+			case 6:
+				setSkill(char, "Forgery")
+			}
+		case 4:
+			switch skillRoll {
+			case 1:
+				setSkill(char, "Medical")
+			case 2:
+				setSkill(char, "Forgery")
+			case 3:
+				setSkill(char, "Electronics")
+			case 4:
+				setSkill(char, "Computer")
+			case 5:
+				setSkill(char, "Streetwise")
+			case 6:
+				setSkill(char, "Jack-o-T")
+			}
 		}
 	}
 }
@@ -268,6 +672,7 @@ func main() {
 	fmt.Printf("Career: %+v\n", career)
 
 	for {
+		var skillRollCount int
 		survivalRoll := roll_dice()
 		if survivalRoll+survivalDM < career.survival {
 			fmt.Printf("You died with roll %d + DM %d below %d\n", survivalRoll, survivalDM, career.survival)
@@ -281,14 +686,31 @@ func main() {
 			if commissionRoll+commissionDM >= career.commission {
 				char.rank += 1
 				char.hasCommission = true
+				skillRollCount += 1
 			}
 		}
 
-		if char.hasCommission && ((career.name != "Merchants" && char.rank <= 5) || (career.name == "Merchants" && char.rank <= 4)) {
+		if char.hasCommission && ((career.name != "Merchants" && char.rank <= 5) || (career.name == "Merchants" && char.rank <= 4)) { //Merchants service has no rank 6
 			promotionRoll := roll_dice()
 			if promotionRoll+promotionDM >= career.promotion {
 				char.rank += 1
+				skillRollCount += 1
 			}
+		}
+
+		for i := 0; i < skillRollCount; i++ {
+			fmt.Print("What skill table do want to use? 1:Personal Development, 2:Service Skills, 3:Advanced Education, 4:Advanced Education 8+ (1-4): ")
+			skillTable := "1"
+			// skillTable := read_input()
+
+			if !(skillTable == "1" || skillTable == "2" || skillTable == "3" || skillTable == "4") {
+				continue
+			}
+
+			skillTableInt, _ := strconv.Atoi(skillTable)
+
+			skillRoll := rand.IntN(6) + 1
+			getSkill(skillRoll, skillTableInt, &career, &char)
 		}
 	}
 }
