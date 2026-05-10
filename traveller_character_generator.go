@@ -217,16 +217,36 @@ func setCareer(draftNumber int, career *Career, char *Character, enlistmentDM *i
 
 // setSkill adds a new skill with value 1 if it doesn't exist,
 // otherwise increases the existing skill’s value by one.
-func setSkill(char *Character, skillName string) {
+func setSkill(char *Character, skillName string) []Skill {
+	skillFound := false
 	for i := range char.skills {
 		if char.skills[i].name == skillName {
 			char.skills[i].value += 1 // Increase value by 1 directly
-		} else {
-			// Skill not found, add it with a value of 1
-			char.skills = append(char.skills, Skill{name: skillName, value: 1})
+			skillFound = true
 		}
 	}
+	// Skill not found, add it with a value of 1
+	if !skillFound {
+		char.skills = append(char.skills, Skill{name: skillName, value: 1})
+	}
+	return char.skills
 }
+
+//func setSkill(char *Character, skillName string) []Skill { // Returns a new slice
+//	newSkills := make([]Skill, len(char.skills)) // Create a copy of the skills slice
+//	copy(newSkills, char.skills)                 // Copy existing skills
+//	skillFound := false
+//	for i := range newSkills {
+//		if newSkills[i].name == skillName {
+//			newSkills[i].value += 1 // Increase value by 1
+//			skillFound = true
+//		}
+//	}
+//	if !skillFound { // Add skill only if not found
+//		newSkills = append(newSkills, Skill{name: skillName, value: 1})
+//	}
+//	return newSkills // Return the modified slice
+//}
 
 func getSkill(skillRoll int, skillTable int, career *Career, char *Character) {
 
@@ -681,6 +701,10 @@ func main() {
 		char.age += 4
 		char.termsServed += 1
 
+		if char.termsServed == 10 {
+			os.Exit(0)
+		}
+
 		if !char.hasCommission {
 			commissionRoll := roll_dice()
 			if commissionRoll+commissionDM >= career.commission {
@@ -700,7 +724,7 @@ func main() {
 
 		for i := 0; i < skillRollCount; i++ {
 			fmt.Print("What skill table do want to use? 1:Personal Development, 2:Service Skills, 3:Advanced Education, 4:Advanced Education 8+ (1-4): ")
-			skillTable := "1"
+			skillTable := "4"
 			// skillTable := read_input()
 
 			if !(skillTable == "1" || skillTable == "2" || skillTable == "3" || skillTable == "4") {
@@ -712,5 +736,14 @@ func main() {
 			skillRoll := rand.IntN(6) + 1
 			getSkill(skillRoll, skillTableInt, &career, &char)
 		}
+
+		fmt.Printf("Name: %s\n", char.name)
+		fmt.Printf("Age: %d\n", char.age)
+		fmt.Printf("Stat: %+v\n", char.stat)
+		fmt.Printf("Service: %s\n", char.service)
+		fmt.Printf("Career: %+v\n", career)
+		fmt.Printf("Rank: %d\n", char.rank)
+		fmt.Printf("Skills: %+v\n", char.skills)
+		fmt.Printf("Terms served: %d\n", char.termsServed)
 	}
 }
