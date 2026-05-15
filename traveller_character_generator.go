@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"math/rand/v2" // Import the math/rand package for random number generation
 	"os"
-	"strconv"
 )
 
 type Stat struct {
@@ -660,16 +659,17 @@ func main() {
 
 	for {
 		fmt.Print("What service do you want to enlist in? 1:Navy, 2:Marines, 3:Army, 4:Scouts, 4:Merchants, 6:Other (1-6): ")
-		serviceChoice := "1"
+		serviceChoice := rand.IntN(6) + 1
+		// serviceChoice := "1"
 		// serviceChoice := read_input()
 
-		if !(serviceChoice == "1" || serviceChoice == "2" || serviceChoice == "3" || serviceChoice == "4" || serviceChoice == "5" || serviceChoice == "6") {
-			continue
-		}
+		// if !(serviceChoice == "1" || serviceChoice == "2" || serviceChoice == "3" || serviceChoice == "4" || serviceChoice == "5" || serviceChoice == "6") {
+		// 	continue
+		// }
 
-		serviceChoiceInt, _ := strconv.Atoi(serviceChoice)
+		// serviceChoiceInt, _ := strconv.Atoi(serviceChoice)
 
-		setCareer(serviceChoiceInt, &career, &char, &enlistmentDM, &survivalDM, &commissionDM, &promotionDM)
+		setCareer(serviceChoice, &career, &char, &enlistmentDM, &survivalDM, &commissionDM, &promotionDM)
 
 		enlistmentRoll := roll_dice()
 
@@ -705,9 +705,22 @@ func main() {
 			os.Exit(0)
 		}
 
+		// Scouts and Other careers get two skills per term, other careers
+		// get two skills in the first term and one skill per subsequent term
+		if char.termsServed == 1 {
+			skillRollCount += 2
+		} else {
+			if !(char.service == "Scouts" || char.service == "Other") {
+				skillRollCount += 1
+			} else {
+				skillRollCount += 2
+			}
+		}
+
 		if !char.hasCommission {
 			commissionRoll := roll_dice()
 			if commissionRoll+commissionDM >= career.commission {
+				fmt.Printf("You made commission with roll %d + DM %d at %d or higher\n", commissionRoll, commissionDM, career.commission)
 				char.rank += 1
 				char.hasCommission = true
 				skillRollCount += 1
@@ -717,6 +730,7 @@ func main() {
 		if char.hasCommission && ((career.name != "Merchants" && char.rank <= 5) || (career.name == "Merchants" && char.rank <= 4)) { //Merchants service has no rank 6
 			promotionRoll := roll_dice()
 			if promotionRoll+promotionDM >= career.promotion {
+				fmt.Printf("You made promotion with roll %d + DM %d at %d or higher\n", promotionRoll, promotionDM, career.promotion)
 				char.rank += 1
 				skillRollCount += 1
 			}
@@ -724,17 +738,18 @@ func main() {
 
 		for i := 0; i < skillRollCount; i++ {
 			fmt.Print("What skill table do want to use? 1:Personal Development, 2:Service Skills, 3:Advanced Education, 4:Advanced Education 8+ (1-4): ")
-			skillTable := "4"
+			// skillTable := "4"
 			// skillTable := read_input()
+			skillTable := rand.IntN(4) + 1
 
-			if !(skillTable == "1" || skillTable == "2" || skillTable == "3" || skillTable == "4") {
-				continue
-			}
+			// if !(skillTable == "1" || skillTable == "2" || skillTable == "3" || skillTable == "4") {
+			//	continue
+			// }
 
-			skillTableInt, _ := strconv.Atoi(skillTable)
+			//skillTableInt, _ := strconv.Atoi(skillTable)
 
 			skillRoll := rand.IntN(6) + 1
-			getSkill(skillRoll, skillTableInt, &career, &char)
+			getSkill(skillRoll, skillTable, &career, &char)
 		}
 
 		fmt.Printf("Name: %s\n", char.name)
